@@ -4,6 +4,8 @@ from users.models import User
 
 
 class Command(BaseCommand):
+    """Кастомная команда для создания администратора с правами суперпользователя."""
+
     def handle(self, *args, **options):
         user = User.objects.create(email="admin@example.com")
         user.is_staff = True
@@ -11,4 +13,3 @@ class Command(BaseCommand):
         user.is_superuser = True
         user.set_password("123qwe")
         user.save()
-    
