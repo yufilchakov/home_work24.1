@@ -5,6 +5,8 @@ from users.models import Payment, User
 
 
 class Command(BaseCommand):
+    """Кастомная команда для создания тестовых данных в базе данных."""
+
     def handle(self, *args, **options):
         user1, _ = User.objects.get_or_create(email="user1@example.com")
         user2, _ = User.objects.get_or_create(email="user2@example.com")
