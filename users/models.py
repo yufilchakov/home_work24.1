@@ -3,7 +3,7 @@ from django.db import models
 
 
 class User(AbstractUser):
-    """Модель пользователя"""
+    """Модель пользователя."""
 
     username = None
 
@@ -41,7 +41,7 @@ class User(AbstractUser):
 
 
 class Payment(models.Model):
-    """Модель платежей"""
+    """Модель платежей."""
 
     payment_choices = {
         "cash": "наличные",

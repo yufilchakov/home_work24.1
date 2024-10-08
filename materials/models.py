@@ -1,10 +1,11 @@
 from django.db import models
 
+from config import settings
 from users.models import User
 
 
 class Course(models.Model):
-    """Модель курсов"""
+    """Модель курсов."""
 
     name = models.CharField(
         max_length=50, verbose_name="Название курса", help_text="Укажите название курса"
@@ -31,6 +32,12 @@ class Course(models.Model):
         verbose_name="Пользователь",
         help_text="Укажите пользователя курсов",
     )
+    link = models.URLField(
+        blank=True,
+        null=True,
+        verbose_name="Ссылка на видео",
+        help_text="Укажите ссылку на видео",
+    )
 
     class Meta:
         verbose_name = "Курс"
@@ -38,7 +45,7 @@ class Course(models.Model):
 
 
 class Lesson(models.Model):
-    """Модель уроков"""
+    """Модель уроков."""
 
     name = models.CharField(
         max_length=50, verbose_name="Название урока", help_text="Укажите название урока"
@@ -80,7 +87,25 @@ class Lesson(models.Model):
         verbose_name="Пользователь",
         help_text="Укажите пользователя уроков",
     )
+    link = models.URLField(
+        blank=True,
+        null=True,
+        verbose_name="Ссылка на видео",
+        help_text="Укажите ссылку на видео",
+    )
 
     class Meta:
         verbose_name = "Урок"
         verbose_name_plural = "Уроки"
+
+
+class Subscription(models.Model):
+    """Модель подписок."""
+
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL, on_delete=models.CASCADE, verbose_name="Пользователь"
+    )
+    course = models.ForeignKey(Course, on_delete=models.CASCADE, verbose_name="Курс")
+
+    def __str__(self):
+        return f"{self.user} - {self.course.name}"
