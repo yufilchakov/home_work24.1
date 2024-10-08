@@ -9,6 +9,8 @@ from users.serializer import PaymentSerializer, UserSerializer
 
 
 class PaymentViewSet(ModelViewSet):
+    """Класс является представлением API для управления платежами."""
+
     queryset = Payment.objects.all()
     serializer_class = PaymentSerializer
     filter_backends = [
@@ -25,6 +27,8 @@ class PaymentViewSet(ModelViewSet):
 
 
 class UserCreateApiView(CreateAPIView):
+    """Класс является представлением API для создания нового пользователя."""
+
     queryset = User.objects.all()
     serializer_class = UserSerializer
     permission_classes = [AllowAny]
