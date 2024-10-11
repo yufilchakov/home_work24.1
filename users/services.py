@@ -6,7 +6,7 @@ stripe.api_key = STRIPE_API_KEY
 
 
 def create_stripe_price(amount, stripe_product_id):
-    """ Создает цену в stripe. """
+    """Создает цену в stripe."""
     return stripe.Price.create(
         currency="rub",
         unit_amount=int(amount * 100),
@@ -15,7 +15,7 @@ def create_stripe_price(amount, stripe_product_id):
 
 
 def create_stripe_product(instance):
-    """ Создает продукт в stripe. """
+    """Создает продукт в stripe."""
     title_product = (
         f"{instance.paid_course}" if instance.paid_course else f"{instance.paid_lesson}"
     )
@@ -24,7 +24,7 @@ def create_stripe_product(instance):
 
 
 def create_stripe_session(price):
-    """ Создает сессию на оплату в stripe. """
+    """Создает сессию на оплату в stripe."""
     session = stripe.checkout.Session.create(
         success_url="http://127.0.0.1:8000/",
         line_items=[{"price": price.get("id"), "quantity": 1}],
