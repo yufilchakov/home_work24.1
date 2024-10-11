@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from rest_framework.generics import (CreateAPIView, DestroyAPIView,
                                      ListAPIView, RetrieveAPIView,
                                      UpdateAPIView, get_object_or_404)
@@ -10,6 +12,7 @@ from materials.models import Course, Lesson, Subscription
 from materials.paginators import CoursePagination, LessonPagination
 from materials.serializer import (CourseDetailSerializer, CourseSerializer,
                                   LessonSerializer, SubscriptionSerializer)
+from materials.tasks import send_update_notification
 from users.permissions import IsModerator, IsOwner
 
 
@@ -38,6 +41,16 @@ class CourseViewSet(ModelViewSet):
         elif self.action in ["destroy"]:
             self.permission_classes = [~IsModerator | IsOwner]
         return [permission() for permission in self.permission_classes]
+
+    def form_valid(self, form):
+        course = form.save()
+        users = course.subscribers.all()
+        if (
+            not course.updated_at
+            or (datetime.now() - course.updated_at).total_seconds() / 3600 > 4
+        ):
+            send_update_notification.delay(course, users)
+        return super().form_valid(form)
 
 
 class LessonCreateApiView(CreateAPIView):
@@ -81,6 +94,17 @@ class LessonUpdateApiView(UpdateAPIView):
     queryset = Lesson.objects.all()
     serializer_class = LessonSerializer
     permission_classes = [IsAuthenticated, IsModerator | IsOwner]
+
+    def form_valid(self, form):
+        lesson = form.save()
+        course = lesson.course
+        users = course.subscribers.all()
+        if (
+            not lesson.updated_at
+            or (datetime.now() - lesson.updated_at).total_seconds() / 3600 > 4
+        ):
+            send_update_notification.delay(course, users)
+        return super().form_valid(form)
 
 
 class LessonDestroyApiView(DestroyAPIView):
